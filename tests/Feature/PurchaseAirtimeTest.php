@@ -30,4 +30,21 @@ class PurchaseAirtimeTest extends TestCase
 
         $this->assertEquals(50, $wallet->fresh()->balance);
     }
+    public function test_insufficient_balance_blocks_purchase()
+    {
+        $user = User::factory()->create();
+
+        // Create a wallet with insufficient balance
+        $wallet = Wallet::factory()->create(['user_id' => $user->id, 'balance' => 0]);
+
+        $response = $this->actingAs($user, 'sanctum')
+            ->postJson('/api/purchase/airtime', [
+                'amount' => 50, // Ensure the amount is greater than wallet balance
+            ]);
+
+        $response->assertStatus(400)
+            ->assertJson(['error' => 'Insufficient wallet balance.']);
+    }
+
+ 
 }

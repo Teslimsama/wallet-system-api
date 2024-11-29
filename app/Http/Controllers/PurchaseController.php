@@ -58,11 +58,15 @@ class PurchaseController extends Controller
     {
         $request->validate(['amount' => 'required|numeric|min:1']);
 
-        DB::transaction(function () use ($request) {
-            $wallet = auth()->user()->wallet;
-            if ($wallet->balance < $request->amount) {
-                abort(400, 'Insufficient balance');
-            }
+        $wallet = auth()->user()->wallet;
+
+        // Check if wallet has sufficient balance
+        if ($wallet->balance < $request->amount) {
+            return response()->json(['error' => 'Insufficient wallet balance.'], 400);
+        }
+
+        // Use transaction for updating the wallet and creating a transaction log
+        DB::transaction(function () use ($request, $wallet) {
             $wallet->balance -= $request->amount;
             $wallet->save();
 
@@ -73,7 +77,9 @@ class PurchaseController extends Controller
                 'description' => 'Airtime purchase',
             ]);
         });
+
         return response()->json(['message' => 'Airtime purchased successfully']);
     }
+
 
 }
