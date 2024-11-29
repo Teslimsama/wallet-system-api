@@ -14,5 +14,11 @@ class TransactionController extends Controller
         $transactions = $user->transactions;
         return view('transaction', compact('transactions'));
     }
+    public function getTransactions()
+    {
+        $user = Auth::user();
+        $transactions = $user->transactions;
+        return response()->json($transactions);
+    }
 
 }

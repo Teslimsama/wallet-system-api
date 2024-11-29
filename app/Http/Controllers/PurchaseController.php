@@ -54,4 +54,26 @@ class PurchaseController extends Controller
             return redirect()->route('airtime.buy_airtime');
         }
     }
+    public function purchaseAirtimeApi(Request $request)
+    {
+        $request->validate(['amount' => 'required|numeric|min:1']);
+
+        DB::transaction(function () use ($request) {
+            $wallet = auth()->user()->wallet;
+            if ($wallet->balance < $request->amount) {
+                abort(400, 'Insufficient balance');
+            }
+            $wallet->balance -= $request->amount;
+            $wallet->save();
+
+            Transaction::create([
+                'user_id' => auth()->id(),
+                'type' => 'purchase',
+                'amount' => $request->amount,
+                'description' => 'Airtime purchase',
+            ]);
+        });
+        return response()->json(['message' => 'Airtime purchased successfully']);
+    }
+
 }

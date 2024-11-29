@@ -21,9 +21,30 @@ class WalletController extends Controller
         return view('index', compact('wallet', 'transactions'));
     }
 
-    public function add_funds(Request $request){
-
+    public function getBalance()
+    {
+        $user = Auth::user();
+        $wallet = $user->wallet;
+        return response()->json(['balance' => $wallet->balance]);
     }
+    public function fundWallet(Request $request)
+    {
+        $request->validate(['amount' => 'required|numeric|min:1']);
+        DB::transaction(function () use ($request) {
+            $wallet = auth()->user()->wallet;
+            $wallet->balance += $request->amount;
+            $wallet->save();
+
+            Transaction::create([
+                'user_id' => auth()->id(),
+                'type' => 'funding',
+                'amount' => $request->amount,
+                'description' => 'Wallet funding',
+            ]);
+        });
+        return response()->json(['message' => 'Wallet funded successfully.']);
+    }
+
     public function fund(Request $request)
     {
         $request->validate(['amount' => 'required|numeric|min:1']);

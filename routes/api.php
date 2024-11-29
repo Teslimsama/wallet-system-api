@@ -13,6 +13,6 @@ Route::get('/user', function (Request $request) {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/wallet/balance', [WalletController::class, 'getBalance']);
     Route::post('/wallet/fund', [WalletController::class, 'fundWallet']);
-    Route::post('/purchase/airtime', [PurchaseController::class, 'purchaseAirtime']);
+    Route::post('/purchase/airtime', [PurchaseController::class, 'purchaseAirtimeApi']);
     Route::get('/transactions', [TransactionController::class, 'getTransactions']);
 });
