@@ -104,6 +104,17 @@ return [
             explode(',', env('APP_PREVIOUS_KEYS', ''))
         ),
     ],
+    // 'providers' => [
+    //     // Other providers...
+    //     Illuminate\Filesystem\FilesystemServiceProvider::class,
+    //     Brian2694\Toastr\ToastrServiceProvider::class,
+    // ],
+    // 'aliases' => [
+    //     // Other aliases...
+    //     'Toastr' => Brian2694\Toastr\Facades\Toastr::class,
+        
+    // ],
+
 
     /*
     |--------------------------------------------------------------------------

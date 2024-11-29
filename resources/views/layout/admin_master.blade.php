@@ -99,18 +99,18 @@
 
             <!-- Nav Item - Users -->
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('add_fund') }}">
+                <a class="nav-link" href="{{ route('wallet.add_fund') }}">
                     <i class="fas fa-fw fa-user"></i>
                     <span>Fund Wallet</span></a>
             </li>
             <!-- Nav Item - category -->
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('buy_airtime') }}">
+                <a class="nav-link" href="{{ route('airtime.buy') }}">
                     <i class="fas fa-fw fa-tags"></i>
                     <span>Buy Airtime</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('transaction') }}">
+                <a class="nav-link" href="{{ route('transactions.index') }}">
                     <i class="fas fa-fw fa-tags"></i>
                     <span>Transactions</span></a>
             </li>
@@ -173,7 +173,7 @@
                 </nav>
                 <!-- End of Topbar -->
                 {{-- message --}}
-                {{-- {!! Toastr::message() !!} --}}
+                {!! Toastr::message() !!}
                 <!-- Begin Page Content -->
                 @yield('content')
 

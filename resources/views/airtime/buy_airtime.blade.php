@@ -6,7 +6,7 @@
                 <h6 class="m-0 font-weight-bold text-primary">Fund Your Wallet</h6>
             </div>
             <div class="card-body">
-                <form action="{{ route('buy') }}" method="post">
+                <form action="{{ route('airtime.purchase') }}" method="post">
                     @csrf
                     <div class="row">
                         <div class="col-md-12 mb-1">

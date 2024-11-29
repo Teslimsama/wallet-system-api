@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\Wallet;
+use Brian2694\Toastr\Facades\Toastr;
+use Brian2694\Toastr\Toastr as ToastrToastr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -49,10 +51,12 @@ class WalletController extends Controller
 
             // Return success response
             // return response()->json(['message' => 'Wallet funded successfully.']);
+            Toastr::success('Wallet funded successfully :)', 'Success');
             return view('index');
         } catch (\Exception $e) {
             // Return error response if something goes wrong
             // return response()->json(['error' => $e->getMessage()], 400);
+            Toastr::error('Wallet funding failed: ' . $e->getMessage(), 'Error');
             return view('wallet.add_wallet');
         }
     }
