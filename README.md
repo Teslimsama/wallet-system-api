@@ -1,16 +1,15 @@
-Here's the modified **README.md** template for your Wallet System API, based on your example:
+---
 
-```markdown
 # Wallet System API
 
-This is a simple Wallet System API where users can fund their wallet, make airtime purchases, and view transactions. This API is built with **Laravel** and provides endpoints for managing wallet balances and transactions.
+A robust Wallet System API built with **Laravel** that allows users to manage their wallets, fund their balances, make airtime purchases, and view transaction history.
 
 ## Requirements
 
-- PHP >= 7.4
+- PHP >= 8.0
 - Composer
 - MySQL or any other supported database
-- Laravel >= 8.x
+- Laravel >= 9.x
 - Postman or any API testing tool
 
 ## Setup
@@ -25,22 +24,31 @@ git clone https://github.com/yourusername/wallet-system-api.git
 
 ### 2. Install dependencies
 
-Navigate to the project directory and install the dependencies using Composer:
+Navigate to the project directory and install the dependencies:
 
 ```bash
 cd wallet-system-api
 composer install
 ```
 
-### 3. Set up the .env file
+### 3. Set up the `.env` file
 
-Copy the `.env.example` file to `.env` and update your environment variables (e.g., database connection):
+Copy the `.env.example` file to `.env` and update your environment variables, especially the database connection settings:
 
 ```bash
 cp .env.example .env
 ```
 
-Update the `.env` file with your database credentials and other necessary configurations.
+Update the `.env` file with your database credentials:
+
+```plaintext
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=wallet_system
+DB_USERNAME=root
+DB_PASSWORD=yourpassword
+```
 
 ### 4. Generate the application key
 
@@ -50,101 +58,140 @@ Run the following command to generate a unique application key:
 php artisan key:generate
 ```
 
-### 5. Migrate the database
+### 5. Run database migrations and seeders
 
-Run the migrations to set up the required tables:
+Migrate the database and seed it with test data (optional):
 
 ```bash
 php artisan migrate
-```
-
-### 6. Seed the database (Optional)
-
-If you want to populate the database with some initial data (users, wallets, transactions), run the following:
-
-```bash
 php artisan db:seed
 ```
 
-### 7. Run the application
+### 6. Start the application
 
-Start the local development server:
+Start the development server:
 
 ```bash
 php artisan serve
 ```
 
-The API will now be available at `http://localhost:8000`.
+The API will now be accessible at `http://localhost:8000`.
 
-## API Endpoints
+---
 
-### 1. View Wallet Balance
+## API Reference
+
+### Authentication
+
+This API uses **Laravel Sanctum** for authentication. A valid Bearer Token is required for most endpoints.
+
+#### Login User
+
+```http
+POST /api/login
+```
+
+| Parameter  | Type     | Description           |
+|------------|----------|-----------------------|
+| `email`    | `string` | **Required** User email |
+| `password` | `string` | **Required** User password |
+
+Response:
+
+```json
+{
+  "token": "your-auth-token"
+}
+```
+
+Pass the token as the `Authorization` header in subsequent requests:
+
+```bash
+Authorization: Bearer your-auth-token
+```
+
+---
+
+### Wallet API
+
+#### Check Wallet Balance
 
 ```http
 GET /api/wallet/balance
 ```
 
-**Authentication**: Bearer token (using Laravel Sanctum)
+Response:
 
-#### Response:
 ```json
 {
-  "balance": 100.0
+  "balance": 500.0
 }
 ```
 
-### 2. Fund Wallet
+#### Fund Wallet
 
 ```http
 POST /api/wallet/fund
 ```
 
-#### Body:
-```json
-{
-  "amount": 50
-}
-```
+| Parameter | Type     | Description                |
+|-----------|----------|----------------------------|
+| `amount`  | `number` | **Required** Amount to add |
 
-#### Response:
+Response:
+
 ```json
 {
   "message": "Wallet funded successfully."
 }
 ```
 
-### 3. Purchase Airtime
+---
+
+### Airtime Purchase API
+
+#### Purchase Airtime
 
 ```http
 POST /api/purchase/airtime
 ```
 
-#### Body:
-```json
-{
-  "amount": 50
-}
-```
+| Parameter | Type     | Description                |
+|-----------|----------|----------------------------|
+| `amount`  | `number` | **Required** Airtime amount |
 
-#### Response:
+Response:
+
 ```json
 {
   "message": "Airtime purchased successfully."
 }
 ```
 
-### 4. View Transactions
+Error Response (if insufficient balance):
+
+```json
+{
+  "error": "Insufficient wallet balance."
+}
+```
+
+---
+
+### Transactions API
+
+#### View Transactions
 
 ```http
 GET /api/transactions
 ```
 
-#### Response:
+Response:
+
 ```json
 [
   {
     "id": 1,
-    "user_id": 1,
     "type": "purchase",
     "amount": 50,
     "description": "Airtime purchase",
@@ -153,146 +200,69 @@ GET /api/transactions
 ]
 ```
 
-## Authentication
-
-This API uses Laravel Sanctum for authentication. To authenticate, you must obtain a bearer token after logging in.
-
-### 1. Login User
-
-```http
-POST /api/login
-```
-
-#### Body:
-```json
-{
-  "email": "user@example.com",
-  "password": "password123"
-}
-```
-
-#### Response:
-```json
-{
-  "token": "your-auth-token"
-}
-```
-
-### 2. Pass the Token in Requests
-
-After logging in, use the returned token to make authenticated requests. Pass the token as the `Authorization` header in your API requests.
-
-```bash
-Authorization: Bearer your-auth-token
-```
+---
 
 ## Testing
 
-You can test the API using Postman or PHPUnit tests.
+### Running Feature Tests
 
-### Running Tests
-
-To run tests in the Laravel project, use the following command:
+The application includes robust feature tests for wallet, airtime purchases, and transactions. Run tests using:
 
 ```bash
 php artisan test
 ```
 
-## Postman Collection
+---
 
-To facilitate testing, here's a basic Postman collection setup:
+## Example Feature Tests
 
-### Steps to Import Postman Collection
+### Airtime Purchase
 
-1. Open Postman.
-2. Click on the **Import** button in the top left corner.
-3. Select the **Link** tab and paste the following URL to import the Postman collection:
-   `https://www.getpostman.com/collections/yourcollectionlink`
-4. Once imported, you can start testing the endpoints.
-
-### Example Postman Collection (JSON)
-
-```json
+```php
+public function test_user_can_purchase_airtime()
 {
-  "info": {
-    "_postman_id": "abc123",
-    "name": "Wallet System API",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "Login User",
-      "request": {
-        "method": "POST",
-        "url": {
-          "raw": "http://localhost:8000/api/login",
-          "host": ["localhost"],
-          "port": "8000",
-          "path": ["api", "login"]
-        },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"password123\"\n}"
-        },
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ]
-      },
-      "response": []
-    },
-    {
-      "name": "View Wallet Balance",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "http://localhost:8000/api/wallet/balance",
-          "host": ["localhost"],
-          "port": "8000",
-          "path": ["api", "wallet", "balance"]
-        },
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer your-auth-token"
-          }
-        ]
-      },
-      "response": []
-    },
-    {
-      "name": "Purchase Airtime",
-      "request": {
-        "method": "POST",
-        "url": {
-          "raw": "http://localhost:8000/api/purchase/airtime",
-          "host": ["localhost"],
-          "port": "8000",
-          "path": ["api", "purchase", "airtime"]
-        },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"amount\": 50\n}"
-        },
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer your-auth-token"
-          },
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ]
-      },
-      "response": []
-    }
-  ]
+    $user = User::factory()->create();
+    $wallet = Wallet::factory()->create(['user_id' => $user->id, 'balance' => 100]);
+
+    $response = $this->actingAs($user, 'sanctum')
+        ->postJson('/api/purchase/airtime', ['amount' => 50]);
+
+    $response->assertStatus(200)
+        ->assertJson(['message' => 'Airtime purchased successfully']);
+
+    $this->assertEquals(50, $wallet->fresh()->balance);
 }
 ```
 
+### Wallet Balance
 
+```php
+public function test_user_can_check_wallet_balance()
+{
+    $user = User::factory()->create();
+    $wallet = Wallet::factory()->create(['user_id' => $user->id, 'balance' => 500]);
 
-This README gives clear instructions for setting up the project, accessing API endpoints, and testing with Postman. You can customize the Postman collection link and other details based on your specific implementation.
+    $this->actingAs($user, 'sanctum')
+        ->getJson('/api/wallet/balance')
+        ->assertStatus(200)
+        ->assertJson(['balance' => 500]);
+}
+```
+
+---
+
+## Postman Collection
+
+Import the [Postman Collection](https://www.getpostman.com/collections/yourcollectionlink) to test API endpoints directly.
+
+---
+
+## Acknowledgements
+
+- [Laravel](https://laravel.com)
+- [PHPUnit](https://phpunit.de)
+- [Tailwind CSS](https://tailwindcss.com)
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
