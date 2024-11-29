@@ -27,7 +27,7 @@ class PurchaseController extends Controller
                 if ($wallet->balance < $request->amount) {
                     throw new \Exception('Insufficient balance.');
 
-                    return view('airtime.buy_airtime');
+                    return redirect()->route('airtime.buy_airtime');
                 }
                 
                 // Deduct the amount from the wallet balance
@@ -46,12 +46,12 @@ class PurchaseController extends Controller
             // Return success response
             // return response()->json(['message' => 'Airtime purchased successfully.']);
             Toastr::success('Airtime purchased successfully :)', 'Success');
-            return view('index');
+            return redirect()->route('index');
         } catch (\Exception $e) {
             // Return error response if something goes wrong
             // return response()->json(['error' => $e->getMessage()], 400);
             Toastr::error('Buying Airtime failed: ' . $e->getMessage(), 'Error');
-            return view('airtime.buy_airtime');
+            return redirect()->route('airtime.buy_airtime');
         }
     }
 }

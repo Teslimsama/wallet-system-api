@@ -12,12 +12,15 @@ use Illuminate\Support\Facades\DB;
 
 class WalletController extends Controller
 {
-    public function balance()
+    public function index()
     {
         $user = Auth::user();
         $wallet = $user->wallet;
-        return response()->json(['balance' => $wallet->balance]);
+        $transactions = $user->transactions;
+
+        return view('index', compact('wallet', 'transactions'));
     }
+
     public function add_funds(Request $request){
 
     }
@@ -52,12 +55,12 @@ class WalletController extends Controller
             // Return success response
             // return response()->json(['message' => 'Wallet funded successfully.']);
             Toastr::success('Wallet funded successfully :)', 'Success');
-            return view('index');
+            return redirect()->route('index');
         } catch (\Exception $e) {
             // Return error response if something goes wrong
             // return response()->json(['error' => $e->getMessage()], 400);
             Toastr::error('Wallet funding failed: ' . $e->getMessage(), 'Error');
-            return view('wallet.add_wallet');
+            return redirect()->route('wallet.add_wallet');
         }
     }
 

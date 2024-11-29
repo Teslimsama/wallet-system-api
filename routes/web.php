@@ -8,12 +8,13 @@ use App\Http\Controllers\TransactionController;
 Auth::routes();
 
 // Home Route
-Route::get('/', function () {
-    return view('index');
-})->name('home');
+// Route::get('/', function () {
+//     return view('index');
+// })->name('home');
 
 // Wallet Routes
 Route::middleware(['auth'])->group(function () {
+    Route::get('/', [WalletController::class, 'index'])->name('home');
     Route::get('/wallet/balance', [WalletController::class, 'balance'])->name('wallet.balance');
     Route::get('/wallet/add', function () {
         return view('wallet.add_wallet');
