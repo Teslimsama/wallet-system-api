@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->enum('type', ['funding', 'purchase']);
-            $table->decimal('amount', 15, 2);
-            $table->string('description');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Ensures user_id references the users table
+            $table->string('type'); // Transaction type: 'funding', 'purchase', etc.
+            $table->decimal('amount', 15, 2); // Transaction amount
+            $table->text('description')->nullable(); // Optional description
             $table->timestamps();
         });
+
+
 
     }
 

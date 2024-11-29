@@ -5,25 +5,30 @@ use App\Http\Controllers\WalletController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\TransactionController;
 
-Route::get('/home', function () {
+Auth::routes();
+
+// Home Route
+Route::get('/', function () {
     return view('index');
 })->name('home');
 
+// Wallet Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/wallet/balance', [WalletController::class, 'balance'])->name('wallet.balance');
+    Route::get('/wallet/add', function () {
+        return view('wallet.add_wallet');
+    })->name('wallet.add_fund');
+    Route::post('/wallet/fund', [WalletController::class, 'fund'])->name('wallet.fund');
 
-Route::get('/wallet/balance', [WalletController::class, 'balance']);
-Route::get('/wallet/add', function () {
-    return view('wallet.add_wallet');
-})->name('add_fund');
-Route::post('/wallet/fund', [WalletController::class, 'fund'])->name('fund');
-Route::get('/airtime/buy', function () {
-    return view('airtime.buy_airtime');
-})->name('buy');
+    // Airtime Purchase Routes
+    Route::get('/airtime/buy', function () {
+        return view('airtime.buy_airtime');
+    })->name('airtime.buy');
+    Route::post('/purchase/airtime', [PurchaseController::class, 'purchaseAirtime'])->name('airtime.purchase');
 
-Route::post('/purchase/airtime', [PurchaseController::class, 'purchaseAirtime']);
+    // Transaction Routes
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+});
 
-Route::get('/transactions', [TransactionController::class, 'index']);
-
-Auth::routes();
-
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
+// Remove unused HomeController route if not needed
+// Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);

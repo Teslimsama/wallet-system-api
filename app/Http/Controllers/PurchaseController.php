@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -11,25 +12,43 @@ class PurchaseController extends Controller
 {
     public function purchaseAirtime(Request $request)
     {
-        $request->validate(['amount' => 'required|numeric|min:1']);
+        try {
+            // Start a database transaction
+            DB::transaction(function () use ($request) {
+                // Lock the wallet row to prevent other transactions from modifying it
+                $wallet = Wallet::where('user_id', auth()->id())->lockForUpdate()->first();
 
-        DB::transaction(function () use ($request) {
-            $user = Auth::user();
-            $wallet = $user->wallet;
-            if ($wallet->balance < $request->amount) {
-                abort(400, 'Insufficient balance');
-            }
-            $wallet->balance -= $request->amount;
-            $wallet->save();
+                if (!$wallet) {
+                    throw new \Exception('Wallet not found.');
+                }
 
-            Transaction::create([
-                'user_id' => $user->id(),
-                'type' => 'purchase',
-                'amount' => $request->amount,
-                'description' => 'Airtime purchase',
-            ]);
-        });
-        return response()->json(['message' => 'Airtime purchased successfully']);
+                // Check if the wallet has enough balance
+                if ($wallet->balance < $request->amount) {
+                    throw new \Exception('Insufficient balance.');
+
+                    return view('airtime.buy_airtime');
+                }
+                
+                // Deduct the amount from the wallet balance
+                $wallet->balance -= $request->amount;
+                $wallet->save();
+                
+                // Log the transaction
+                Transaction::create([
+                    'user_id' => auth()->id(),
+                    'type' => 'airtime',
+                    'amount' => $request->amount,
+                    'description' => 'Airtime purchase',
+                ]);
+            });
+            
+            // Return success response
+            // return response()->json(['message' => 'Airtime purchased successfully.']);
+            return view('index');
+        } catch (\Exception $e) {
+            // Return error response if something goes wrong
+            // return response()->json(['error' => $e->getMessage()], 400);
+            return view('airtime.buy_airtime');
+        }
     }
-
 }

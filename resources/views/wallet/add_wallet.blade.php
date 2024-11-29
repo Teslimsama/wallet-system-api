@@ -7,6 +7,7 @@
             </div>
             <div class="card-body">
                 <form action="{{ route('fund') }}" method="post">
+                    @csrf
                     <div class="row">
                         <div class="col-md-12 mb-1">
                             <label for="amount">Amount</label>

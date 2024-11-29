@@ -97,11 +97,6 @@
                 Interface
             </div>
 
-            
-           
-
-            
-
             <!-- Nav Item - Users -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('add_fund') }}">
@@ -110,9 +105,14 @@
             </li>
             <!-- Nav Item - category -->
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('buy') }}">
+                <a class="nav-link" href="{{ route('buy_airtime') }}">
                     <i class="fas fa-fw fa-tags"></i>
                     <span>Buy Airtime</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('transaction') }}">
+                    <i class="fas fa-fw fa-tags"></i>
+                    <span>Transactions</span></a>
             </li>
 
             <!-- Divider -->
@@ -147,10 +147,10 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {{-- <span
-                                    class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->firstname . ' ' . Auth::user()->lastname }}</span> --}}
-                                {{-- <img class="img-profile rounded-circle"
-                                    src="{{ URL::to('assets/images/admin/' . Auth::user()->image) }}"> --}}
+                                <span
+                                    class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->firstname . ' ' . Auth::user()->lastname }}</span>
+                                <img class="img-profile rounded-circle"
+                                    src="{{ URL::to('assets/images/admin/' . Auth::user()->image) }}">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -217,7 +217,13 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="#">Logout</a>
+                    <a class="btn btn-primary" href="{{ route('logout') }}" data-toggle="modal"
+                        data-target="#logoutModal"
+                        onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">Logout</a>
+                                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
                 </div>
             </div>
         </div>

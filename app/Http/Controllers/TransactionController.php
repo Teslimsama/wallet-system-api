@@ -12,7 +12,7 @@ class TransactionController extends Controller
     {
         $user = Auth::user();
         $transactions = $user->transactions;
-        return response()->json($transactions);
+        return view('transaction', compact('transactions'));
     }
 
 }
